@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Commute">
+<title>Commute Calculator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    color: #FFD700;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+  }
+
+  .origin-display {
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+
+  .origin-display label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #FFD700;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .origin-display input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #ccc;
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+  }
+
+  .destination-box {
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+
+  .destination-box label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #FFD700;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .destination-box input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.05rem;
+    font-family: inherit;
+    outline: none;
+  }
+
+  .destination-box input::placeholder {
+    color: #555;
+  }
+
+  .mode-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .mode-btn {
+    flex: 1;
+    padding: 10px 0;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    color: #888;
+    font-size: 0.82rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+
+  .mode-btn:hover {
+    border-color: #FFD700;
+    color: #FFD700;
+  }
+
+  .mode-btn.active {
+    background: #FFD700;
+    color: #0a0a0a;
+    border-color: #FFD700;
+    font-weight: 600;
+  }
+
+  .go-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #FFD700, #e6c200);
+    border: none;
+    border-radius: 16px;
+    color: #0a0a0a;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    margin-bottom: 32px;
+  }
+
+  .go-btn:hover {
+    opacity: 0.9;
+  }
+
+  .go-btn:active {
+    opacity: 0.8;
+  }
+
+  .section-title {
+    color: #FFD700;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .event-card {
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+    text-decoration: none;
+    display: block;
+  }
+
+  .event-card:hover {
+    border-color: #FFD700;
+  }
+
+  .event-card:active {
+    background: #1e1e1e;
+  }
+
+  .event-name {
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .event-date {
+    color: #FFD700;
+    font-size: 0.78rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .event-address {
+    color: #888;
+    font-size: 0.82rem;
+  }
+
+  .event-note {
+    color: #666;
+    font-size: 0.75rem;
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  .no-events {
+    color: #555;
+    font-size: 0.85rem;
+    padding: 20px 0;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #1e1e1e;
+    margin: 24px 0;
+  }
+
+  /* Mobile tweaks */
+  @media (max-width: 480px) {
+    body { padding: 16px; }
+    h1 { font-size: 1.3rem; }
+    .mode-btn { font-size: 0.78rem; padding: 9px 0; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Commute Calculator</h1>
+  <p class="subtitle">From 37 West 21st Street</p>
+
+  <div class="origin-display">
+    <label>From</label>
+    <input type="text" id="origin" value="37 West 21st Street, New York, NY">
+  </div>
+
+  <div class="destination-box">
+    <label>To</label>
+    <input type="text" id="destination" placeholder="Type an address..." autofocus>
+  </div>
+
+  <div class="mode-toggle">
+    <button class="mode-btn" data-mode="driving" onclick="setMode(this)">Driving</button>
+    <button class="mode-btn active" data-mode="transit" onclick="setMode(this)">Transit</button>
+    <button class="mode-btn" data-mode="walking" onclick="setMode(this)">Walking</button>
+  </div>
+
+  <button class="go-btn" onclick="getCommute()">Get Commute Time</button>
+
+  <hr class="divider">
+
+  <p class="section-title">Upcoming Events</p>
+
+  <!-- EVENTS_START -->
+  <a class="event-card" onclick="openEvent('225 Liberty Street, New York, NY')">
+    <div class="event-date">Mon, Apr 14 -- 3:15 PM</div>
+    <div class="event-name">Coalition Conference</div>
+    <div class="event-address">225 Liberty Street, New York, NY</div>
+    <div class="event-note">Convene at Brookfield Place, 2nd Floor entrance</div>
+  </a>
+
+  <a class="event-card" onclick="openEvent('10 E 21st St, New York, NY 10010')">
+    <div class="event-date">Sun, Apr 13 -- 6:45 PM</div>
+    <div class="event-name">Society Billiards + Bar</div>
+    <div class="event-address">10 E 21st St, New York, NY 10010</div>
+  </a>
+
+  <a class="event-card" onclick="openEvent('1216 Broadway, New York, NY 10001')">
+    <div class="event-date">Wed, Apr 8 -- 3:30 PM</div>
+    <div class="event-name">Calum Johnson Show Recording</div>
+    <div class="event-address">1216 Broadway (38 W 30th St), New York, NY 10001</div>
+    <div class="event-note">Theorist Podcast Studio Midtown West</div>
+  </a>
+  <!-- EVENTS_END -->
+
+</div>
+
+<script>
+  let currentMode = 'transit';
+
+  function setMode(btn) {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+  }
+
+  function buildMapsUrl(origin, destination, mode) {
+    const params = new URLSearchParams({
+      api: '1',
+      origin: origin,
+      destination: destination,
+      travelmode: mode
+    });
+    return 'https://www.google.com/maps/dir/?' + params.toString();
+  }
+
+  function getCommute() {
+    const origin = document.getElementById('origin').value.trim();
+    const dest = document.getElementById('destination').value.trim();
+    if (!dest) {
+      document.getElementById('destination').focus();
+      return;
+    }
+    window.open(buildMapsUrl(origin, dest, currentMode), '_blank');
+  }
+
+  function openEvent(address) {
+    const origin = document.getElementById('origin').value.trim();
+    window.open(buildMapsUrl(origin, address, currentMode), '_blank');
+  }
+
+  // Enter key triggers commute
+  document.getElementById('destination').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') getCommute();
+  });
+</script>
+</body>
+</html>
